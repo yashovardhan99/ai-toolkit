@@ -1,11 +1,12 @@
 """Base classes and utilities for document transforms."""
 
 import asyncio
-import copy
 from abc import abstractmethod
 from collections.abc import AsyncIterator, Iterable, Sequence
 from itertools import batched
 from typing import Protocol
+
+import attrs
 
 from ai_toolkit import Document
 
@@ -40,7 +41,7 @@ class MetadataExtractor(DocumentTransform, Protocol):
         """
         metadata_list = await self.extract(documents)
         return [
-            copy.replace(document, metadata=document.metadata | metadata)
+            attrs.evolve(document, metadata=document.metadata | metadata)
             for document, metadata in zip(documents, metadata_list, strict=True)
         ]
 
@@ -120,7 +121,7 @@ class TransformPipeline:
         Yields:
             Document: Transformed Document objects.
         """
-        for batch in batched(documents, batch_size, strict=False):
+        for batch in batched(documents, batch_size):
             for transform in self.transforms:
                 batch = await transform.transform(batch)
             for doc in batch:

@@ -4,12 +4,15 @@ import asyncio
 from collections.abc import Sequence
 
 from ai_toolkit import Document
+from ai_toolkit.ocr.base import OcrDispatcher
+from ai_toolkit.ocr.providers import TextReader
 from ai_toolkit.transforms import (
     DocumentTransform,
     MetadataExtractor,
     TransformPipeline,
     TransformRegistry,
 )
+from ai_toolkit.types import File
 
 
 class ExampleMetadataExtractor(MetadataExtractor):
@@ -41,6 +44,10 @@ class ExampleDocumentTransform(DocumentTransform):
 
 async def main():
     """Example usage of the TransformRegistry and TransformPipeline."""
+    files = [File(path="README.md")]
+    dispatcher = OcrDispatcher()
+    TextReader().register_with_dispatcher(dispatcher=dispatcher)
+    print(await dispatcher.dispatch(files))
     docs = [Document(str(i)) for i in range(100)]
     registry = TransformRegistry()
     registry.register("example_metadata_extractor", ExampleMetadataExtractor())
@@ -57,12 +64,14 @@ async def main():
         ["example_metadata_extractor", "example_document_transform"]
     )
     docs1 = []
+    task1 = pipeline.run(docs)
     task2 = pipeline2.run_and_collect(docs)
-    async for transformed_doc in pipeline.run(docs):
+    t2 = asyncio.create_task(task2)
+    async for transformed_doc in task1:
         docs1.append(transformed_doc)
         print(transformed_doc)
     print("Pipeline 1 complete.")
-    docs2 = await task2
+    docs2 = await t2
     print("Pipeline 2 complete.")
     print(docs1 == docs2)
 
