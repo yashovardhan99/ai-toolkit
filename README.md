@@ -28,6 +28,10 @@ Special credits to `llama-index`'s ingestion pipeline design, which was used as 
 
 `ai_toolkit.langchain` provides easy utilities to integrate `ai_toolkit` with the `langchain` AI framework.
 
+### `llamaindex`
+
+`ai_toolkit.llama_index` provides `liteparse` as an easy to use OCR module.
+
 ### `azure`
 
 `ai_toolkit.azure` provides easy integratio with various Azure AI services such as Azure Document Intelligence.
