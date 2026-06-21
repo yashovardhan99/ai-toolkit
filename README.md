@@ -33,3 +33,7 @@ I have a lot planned for this toolkit. Some items in my pipeline are:
 - Index management - Simple easy-to-use index management that works across different vector stores.
 - Prompt registry - Swappable prompt registry system that lets you simplify prompt management.
 - Config managemnt - Tying up everything we worked on, a simple config management system with support for external config files such as .toml files.
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.

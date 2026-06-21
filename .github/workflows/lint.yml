@@ -1,0 +1,64 @@
+# This workflow will install Python dependencies, run lint with a variety of Python versions
+# and check for type errors.
+
+name: Lint and Type Checks
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "ai_toolkit/**"
+      - "tests/**"
+      - ".github/workflows/lint.yml"
+      - "pyproject.toml"
+      - "uv.lock"
+  pull_request:
+    branches: ["main"]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    name: Lint and Type Checks
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12", "3.13", "3.14"]
+
+    steps:
+      - uses: actions/checkout@v6.0.3
+
+      - name: Install uv and set the Python version
+        uses: astral-sh/setup-uv@v8.2.0
+        with:
+          python-version: ${{ matrix.python-version }}
+          # Install a specific version of uv.
+          version: "0.11.19"
+          enable-cache: true
+
+      - name: Install python
+        run: uv python install
+
+      - name: Check Lockfile
+        run: uv lock --check
+
+      - name: Install the project
+        run: uv sync --locked --all-extras --dev
+
+      - name: Run prek
+        run: prek run --show-diff-on-failure --color=always --group builtin
+
+      - name: Run Ruff lint check
+        run: |
+          uv run ruff check --no-fix --output-format=github
+
+      - name: Run Ruff format check
+        run: |
+          uv run ruff format --check
+
+      - name: Run ty type check
+        run: |
+          uv run ty check --output-format=github
