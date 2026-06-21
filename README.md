@@ -40,7 +40,6 @@ Special credits to `llama-index`'s ingestion pipeline design, which was used as 
 
 I have a lot planned for this toolkit. Some items in my pipeline are:
 
-- OCR/Document parsing - providing a swappable interface for using different OCR/parsing tools like Azure Document Intelligence and llama-parse.
 - Chunking - To be made available as a `DocumentTransform`. Easy plugins for trying out different chunking methods from your favourite framework.
 - Index management - Simple easy-to-use index management that works across different vector stores.
 - Prompt registry - Swappable prompt registry system that lets you simplify prompt management.
