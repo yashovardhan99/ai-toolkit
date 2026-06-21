@@ -44,6 +44,7 @@ name = "ruff check"
 entry = "uv run ruff check"
 language = "system"
 types_or = ["pyproject", "python"]
+pass_filenames = false
 groups = ["ruff"]
 
 [[repos.hooks]]
@@ -52,6 +53,7 @@ name = "ruff format"
 entry = "uv run ruff format"
 language = "system"
 types_or = ["pyproject", "python"]
+pass_filenames = false
 groups = ["ruff"]
 
 [[repos.hooks]]

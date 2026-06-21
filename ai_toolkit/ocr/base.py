@@ -1,11 +1,14 @@
 """Base classes and utilities for OCR."""
 
-import copy
+from __future__ import annotations
+
 import itertools
 import mimetypes
 from collections.abc import Collection, Iterable, Sequence
 from pathlib import Path
 from typing import Protocol
+
+import attrs
 
 from ai_toolkit import Document
 from ai_toolkit.types import File
@@ -106,7 +109,7 @@ class OcrDispatcher:
             Sequence[Document]: A sequence of extracted documents.
         """
         files_with_mime = (
-            copy.replace(file, mime_type=mimetypes.guess_file_type(file.path)[0])
+            attrs.evolve(file, mime_type=mimetypes.guess_type(file.path)[0])
             if file.mime_type is None
             else file
             for file in files
@@ -116,7 +119,7 @@ class OcrDispatcher:
         groups = itertools.groupby(files_with_mime, key=lambda file: file.mime_type)
         documents = []
         for mime_type, group in groups:
-            batches = itertools.batched(group, batch_size, strict=False)
+            batches = itertools.batched(group, batch_size)
             for batch in batches:
                 batch_docs = await self._dispatch_batch(batch, mime_type)
                 documents.extend(batch_docs)
