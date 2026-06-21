@@ -4,7 +4,7 @@ import asyncio
 from collections.abc import Sequence
 
 from ai_toolkit import Document
-from ai_toolkit.ocr.base import OcrDispatcher
+from ai_toolkit.ocr import OcrDispatcher
 from ai_toolkit.ocr.providers import TextReader
 from ai_toolkit.transforms import (
     DocumentTransform,
@@ -45,8 +45,7 @@ class ExampleDocumentTransform(DocumentTransform):
 async def main():
     """Example usage of the TransformRegistry and TransformPipeline."""
     files = [File(path="README.md")]
-    dispatcher = OcrDispatcher()
-    TextReader().register_with_dispatcher(dispatcher=dispatcher)
+    dispatcher = OcrDispatcher([TextReader()])
     print(await dispatcher.dispatch(files))
     docs = [Document(str(i)) for i in range(100)]
     registry = TransformRegistry()

@@ -18,11 +18,19 @@ This module aims to do the same with your documents. The entire system is writte
 
 Special credits to `llama-index`'s ingestion pipeline design, which was used as an inspiration for this design.
 
+### `ai_toolkit.ocr`
+
+`ai_toolkit.ocr` aims to allow combining different OCR providers for what works best for your data. It provides an easy base interface that (at its core) simply converts `File`s into `Document`s. This simple approach makes it really easy to plug it into your existing OCR pipeline and simplify implementation.
+
 ## Integrations
 
 ### `langchain`
 
 `ai_toolkit.langchain` provides easy utilities to integrate `ai_toolkit` with the `langchain` AI framework.
+
+### `azure`
+
+`ai_toolkit.azure` provides easy integratio with various Azure AI services such as Azure Document Intelligence.
 
 ## Upcoming
 
