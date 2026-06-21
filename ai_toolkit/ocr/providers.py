@@ -1,17 +1,43 @@
 """Sample OCR providers."""
 
 import asyncio
-from collections.abc import Iterable, Sequence
+from abc import abstractmethod
+from collections.abc import Collection, Iterable, Sequence
+from typing import Protocol
 
 from ai_toolkit import Document
-from ai_toolkit.ocr.base import OcrDispatcher, OcrProvider
 from ai_toolkit.types import File
+
+
+class OcrProvider(Protocol):
+    """A protocol for OCR providers."""
+
+    @abstractmethod
+    async def extract(self, files: Iterable[File]) -> Sequence[Document]:
+        """Perform OCR on the given files.
+
+        Args:
+            files (Iterable[File]): The files to perform OCR on.
+
+        Returns:
+            Sequence[Document]: A sequence of extracted documents.
+        """
+        raise NotImplementedError("Subclasses must implement the extract method.")
+
+    @abstractmethod
+    def get_supported_mime_types(self) -> Collection[str]:
+        """Get the supported MIME types for this provider.
+
+        Returns:
+            Collection[str]: A collection of supported MIME types.
+        """
+        raise NotImplementedError(
+            "Subclasses must implement the get_supported_mime_types method."
+        )
 
 
 class TextReader(OcrProvider):
     """A provider that reads text from files without performing OCR."""
-
-    SUPPORTED_MIME_TYPES = {"text/plain", "text/markdown"}
 
     async def extract(self, files: Iterable[File]) -> Sequence[Document]:
         """Read text from the given files.
@@ -24,19 +50,12 @@ class TextReader(OcrProvider):
         """
         documents = []
         for file in files:
-            content = await asyncio.to_thread(self._read_file, file)
+            content = await asyncio.to_thread(file.path.read_text)
             documents.append(
                 Document(content=content, metadata={"source": file.path.as_posix()})
             )
         return documents
 
-    def _read_file(self, file: File) -> str:
-        return file.path.read_text()
-
-    def register_with_dispatcher(
-        self, dispatcher: OcrDispatcher, set_default: bool = False
-    ) -> None:
-        """Register this provider with the given OcrDispatcher."""
-        dispatcher.register_provider(self.SUPPORTED_MIME_TYPES, self)
-        if set_default:
-            dispatcher.set_default_provider(self)
+    def get_supported_mime_types(self) -> Collection[str]:
+        """Get the supported MIME types for this provider."""
+        return {"text/plain", "text/markdown"}

@@ -18,17 +18,28 @@ This module aims to do the same with your documents. The entire system is writte
 
 Special credits to `llama-index`'s ingestion pipeline design, which was used as an inspiration for this design.
 
+### `ai_toolkit.ocr`
+
+`ai_toolkit.ocr` aims to allow combining different OCR providers for what works best for your data. It provides an easy base interface that (at its core) simply converts `File`s into `Document`s. This simple approach makes it really easy to plug it into your existing OCR pipeline and simplify implementation.
+
 ## Integrations
 
 ### `langchain`
 
 `ai_toolkit.langchain` provides easy utilities to integrate `ai_toolkit` with the `langchain` AI framework.
 
+### `llamaindex`
+
+`ai_toolkit.llama_index` provides `liteparse` as an easy to use OCR module.
+
+### `azure`
+
+`ai_toolkit.azure` provides easy integratio with various Azure AI services such as Azure Document Intelligence.
+
 ## Upcoming
 
 I have a lot planned for this toolkit. Some items in my pipeline are:
 
-- OCR/Document parsing - providing a swappable interface for using different OCR/parsing tools like Azure Document Intelligence and llama-parse.
 - Chunking - To be made available as a `DocumentTransform`. Easy plugins for trying out different chunking methods from your favourite framework.
 - Index management - Simple easy-to-use index management that works across different vector stores.
 - Prompt registry - Swappable prompt registry system that lets you simplify prompt management.

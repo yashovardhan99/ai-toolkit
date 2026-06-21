@@ -1,6 +1,6 @@
 """OCR package for ai_toolkit."""
 
-from .base import OcrDispatcher, OcrProvider
-from .providers import TextReader
+from .dispatcher import OcrDispatcher
+from .providers import OcrProvider, TextReader
 
 __all__ = ["OcrDispatcher", "OcrProvider", "TextReader"]
