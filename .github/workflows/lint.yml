@@ -12,6 +12,7 @@ on:
       - ".github/workflows/lint.yml"
       - "pyproject.toml"
       - "uv.lock"
+      - "perk.toml"
   pull_request:
     branches: ["main"]
 
@@ -49,7 +50,7 @@ jobs:
         run: uv sync --locked --all-extras --dev
 
       - name: Run prek
-        run: uv run prek run --show-diff-on-failure --color=always --group builtin
+        run: uv run prek run --show-diff-on-failure --color=always --all-files --group builtin
 
       - name: Run Ruff lint check
         run: |
