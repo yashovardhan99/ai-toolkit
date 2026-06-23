@@ -77,7 +77,8 @@ class AzureDocumentIntelligenceProvider(OcrProvider):
         result = await asyncio.to_thread(poller.result)
         return Document(
             content=result.content,
-            metadata={"source": file.path, "_provider": "azure_document_intelligence"},
+            source=file.path.as_posix(),
+            metadata={"_provider": "azure_document_intelligence"},
         )
 
     def override_supported_mime_types(self, mime_types: set[str]) -> None:

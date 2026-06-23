@@ -7,6 +7,7 @@ from .base import (
     TransformPipeline,
     TransformRegistry,
 )
+from .transforms import SimpleDirectoryReader, SimpleDirectoryWriter
 
 __all__ = [
     "DocumentTransform",
@@ -14,4 +15,6 @@ __all__ = [
     "SyncDocumentTransform",
     "TransformPipeline",
     "TransformRegistry",
+    "SimpleDirectoryReader",
+    "SimpleDirectoryWriter",
 ]

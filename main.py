@@ -9,6 +9,8 @@ from ai_toolkit.ocr.providers import TextReader
 from ai_toolkit.transforms import (
     DocumentTransform,
     MetadataExtractor,
+    SimpleDirectoryReader,
+    SimpleDirectoryWriter,
     TransformPipeline,
     TransformRegistry,
 )
@@ -62,6 +64,9 @@ async def main():
     pipeline2 = registry.build_pipeline(
         ["example_metadata_extractor", "example_document_transform"]
     )
+    pipeline.add_transform(
+        SimpleDirectoryWriter(output_dir="output", persist_metadata=True)
+    )
     docs1 = []
     task1 = pipeline.run(docs)
     task2 = pipeline2.run_and_collect(docs)
@@ -73,6 +78,22 @@ async def main():
     docs2 = await t2
     print("Pipeline 2 complete.")
     print(docs1 == docs2)
+
+    docs3 = []
+
+    pipeline3 = TransformPipeline(
+        transforms=[
+            SimpleDirectoryReader(input_dir="output"),
+            # ExampleDocumentTransform(suffix=" - transformed again"),
+        ]
+    )
+
+    print("Running pipeline 3...")
+    async for transformed_doc in pipeline3.run([]):
+        docs3.append(transformed_doc)
+        print(transformed_doc)
+
+    print("Pipeline 3 complete.")
 
 
 if __name__ == "__main__":

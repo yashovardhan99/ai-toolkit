@@ -38,5 +38,6 @@ class LiteParseProvider(OcrProvider):
         result = await asyncio.to_thread(self.parser.parse, file.path)
         return Document(
             content=result.text,
-            metadata={"source": file.path, "_provider": "liteparse"},
+            source=file.path.as_posix(),
+            metadata={"_provider": "liteparse"},
         )

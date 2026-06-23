@@ -48,12 +48,12 @@ class TextReader(OcrProvider):
         Returns:
             Sequence[Document]: A sequence of documents with the read text.
         """
+        file_contents = await asyncio.gather(
+            *(asyncio.to_thread(file.path.read_text) for file in files)
+        )
         documents = []
-        for file in files:
-            content = await asyncio.to_thread(file.path.read_text)
-            documents.append(
-                Document(content=content, metadata={"source": file.path.as_posix()})
-            )
+        for file, content in zip(files, file_contents, strict=True):
+            documents.append(Document(content=content, source=file.path.as_posix()))
         return documents
 
     def get_supported_mime_types(self) -> Collection[str]:

@@ -14,3 +14,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Langchain - support `transforms` with `langchain`.
 - Azure - support `ocr` with Azure document intelligence.
 - Llama Index - Support `ocr` with `liteparse` by Llama Index.
+- New built-in transforms.

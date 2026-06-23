@@ -2,9 +2,9 @@
 
 import asyncio
 from abc import abstractmethod
-from collections.abc import AsyncIterator, Iterable, Sequence
+from collections.abc import AsyncIterator, Iterable, Mapping, Sequence
 from itertools import batched
-from typing import Protocol
+from typing import Any, Protocol
 
 import attrs
 
@@ -41,19 +41,22 @@ class MetadataExtractor(DocumentTransform, Protocol):
         """
         metadata_list = await self.extract(documents)
         return [
-            attrs.evolve(document, metadata=document.metadata | metadata)
+            attrs.evolve(document, metadata=dict(document.metadata) | dict(metadata))
             for document, metadata in zip(documents, metadata_list, strict=True)
         ]
 
     @abstractmethod
-    async def extract(self, documents: Sequence[Document]) -> Sequence[dict]:
+    async def extract(
+        self, documents: Sequence[Document]
+    ) -> Sequence[Mapping[str, Any]]:
         """Extract metadata from the given Document objects.
 
         Args:
             documents (Sequence[Document]): The Document objects to extract metadata from.
 
         Returns:
-            Sequence[dict]: A sequence of metadata dictionaries extracted from the documents.
+            Sequence[Mapping[str, Any]]: A sequence of metadata dictionaries extracted
+                from the documents.
         """
         raise NotImplementedError("Subclasses must implement the extract method.")
 
@@ -121,6 +124,22 @@ class TransformPipeline:
         Yields:
             Document: Transformed Document objects.
         """
+        if batch_size < 1:
+            raise ValueError("batch_size must be at least 1")
+
+        if not self.transforms:
+            for doc in documents:
+                yield doc
+            return
+
+        while not documents:
+            # A transform may produce documents even if the input is empty,
+            # so we need to run all transforms at least once.
+            documents = await self.transforms.pop(0).transform([])
+
+        # If a transform produces some documents, we need to continue
+        # processing them through the remaining transforms.
+
         for batch in batched(documents, batch_size):
             for transform in self.transforms:
                 batch = await transform.transform(batch)
